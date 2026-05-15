@@ -1,0 +1,37 @@
+{
+  "name": "vertex-ai-mcp-bridge",
+  "description": "A bridge MCP server that integrates Google Vertex AI prompt management and optimization tools with Alibaba Cloud DashScope, supporting SSE-based deployment on Google Cloud Run.",
+  "version": "1.0.0",
+  "author": "hzy9981",
+  "repository": "https://github.com/hzy9981/vertex-ai-mcp-bridge",
+  "keywords": [
+    "mcp",
+    "vertex-ai",
+    "dashscope",
+    "prompt-engineering",
+    "google-cloud",
+    "cloud-run"
+  ],
+  "tools": [
+    {
+      "name": "create_prompt",
+      "description": "Create a new prompt in Vertex AI."
+    },
+    {
+      "name": "read_prompt",
+      "description": "Read a prompt from Vertex AI by ID."
+    },
+    {
+      "name": "update_prompt",
+      "description": "Update an existing prompt in Vertex AI."
+    },
+    {
+      "name": "list_prompts",
+      "description": "List all prompts in Vertex AI."
+    },
+    {
+      "name": "call_dashscope_mcp",
+      "description": "Call a tool on the remote DashScope MCP server."
+    }
+  ]
+}

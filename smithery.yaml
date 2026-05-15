@@ -1,0 +1,17 @@
+version: "1.0"
+server:
+  name: "vertex-ai-mcp-bridge"
+  description: "Bridges Vertex AI and DashScope MCP services."
+  docker:
+    file: "Dockerfile"
+  env:
+    GOOGLE_CLOUD_PROJECT:
+      description: "Google Cloud Project ID"
+      required: true
+    GOOGLE_CLOUD_LOCATION:
+      description: "Google Cloud Location (default: us-central1)"
+      required: false
+      default: "us-central1"
+    DASHSCOPE_API_KEY:
+      description: "Alibaba Cloud DashScope API Key"
+      required: true
