@@ -23,4 +23,4 @@ RUN uv pip install --system .
 EXPOSE 8080
 
 # Run the server when the container launches
-CMD ["python", "-m", "vertex.server", "--transport=sse"]
+CMD ["python", "-m", "vertex.server", "--transport=hybrid"]

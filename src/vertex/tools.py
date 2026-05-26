@@ -210,7 +210,6 @@ class VertexPromptManager:
             client.prompts.create(prompt=prompt, config=create_config)
         )
 
-    # TODO(b/455906163): Add support for updating display name of a prompt.
     def update_prompt(
         self,
         prompt_id: str,
@@ -219,8 +218,9 @@ class VertexPromptManager:
         content: str | None = None,
         system_instruction: str | None = None,
         model: str | None = None,
+        display_name: str | None = None,
     ) -> PromptDetails:
-        """Update a prompt with given prompt_id and new content, system instruction, model."""
+        """Update a prompt with given prompt_id and new content, system instruction, model, and display name."""
         client = self._get_client(project_id, location_id)
         prompt = self._get_prompt(
             prompt_id, project_id, location_id
@@ -235,10 +235,14 @@ class VertexPromptManager:
         if model is not None:
             prompt.prompt_data.model = model
 
+        update_config = vertexai_types.UpdatePromptConfig(
+            prompt_display_name=display_name
+        )
+
         try:
             return _build_prompt_details(
-                client.prompts.create_version(
-                    prompt=prompt, prompt_id=prompt_id
+                client.prompts.update(
+                    prompt_id=prompt_id, prompt=prompt, config=update_config
                 )
             )
         except Exception as e:

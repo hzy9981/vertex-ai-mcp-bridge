@@ -40,4 +40,4 @@ uv pip install .
 
 # Start the server
 echo "Starting Vertex AI server..."
-./.venv/bin/python3 -m vertex.server
+./.venv/bin/python3 -m vertex.server "$@"
