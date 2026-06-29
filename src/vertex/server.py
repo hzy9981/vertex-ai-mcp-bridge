@@ -8,6 +8,7 @@ from absl import app, flags
 from mcp.server import fastmcp
 
 from . import tools
+from . import usage_tracker
 from .prompt_optimizer import analyzer, prompt_optimizer
 
 FLAGS = flags.FLAGS
@@ -144,6 +145,12 @@ def main(argv: Sequence[str]) -> None:
     )
     mcp.add_tool(analyzer.generate_report, name="generate_html_report")
 
+    # --- Usage Statistics Tool ---
+    @mcp.tool()
+    async def get_token_usage_stats() -> dict:
+        """获取 MCP 服务的 token 使用统计信息。"""
+        return usage_tracker.get_stats()
+
     # --- 集成 DashScope MCP ---
     @mcp.tool()
     async def call_dashscope_mcp(tool_name: str, arguments: dict) -> str:
@@ -167,7 +174,17 @@ def main(argv: Sequence[str]) -> None:
             async with ClientSession(read, write) as session:
                 await session.initialize()
                 result = await session.call_tool(tool_name, arguments)
-                return str(result.content)
+                res_str = str(result.content)
+                
+                # Log usage
+                usage_tracker.log_usage(
+                    tool_name=f"dashscope:{tool_name}",
+                    model_name="dashscope-remote",
+                    input_text=json.dumps(arguments),
+                    output_text=res_str
+                )
+                
+                return res_str
     # --------------------------
 
     if FLAGS.transport in ["sse", "streamable-http", "hybrid"]:

@@ -10,6 +10,8 @@ from google.genai import types as genai_types
 from vertexai import types as vertexai_types
 from vertexai._genai import Client
 
+from . import usage_tracker
+
 _DEFAULT_LOCATION = "us-central1"
 _MAX_PREVIEW_LENGTH = 100  # Define the maximum length for preview
 
@@ -206,9 +208,18 @@ class VertexPromptManager:
             prompt_display_name=display_name
         )
 
-        return _build_prompt_details(
-            client.prompts.create(prompt=prompt, config=create_config)
+        prompt = client.prompts.create(prompt=prompt, config=create_config)
+        details = _build_prompt_details(prompt)
+        
+        # Log usage
+        usage_tracker.log_usage(
+            tool_name="create_prompt",
+            model_name=model,
+            input_text=f"SI: {system_instruction}\nContent: {content}",
+            output_text=json.dumps(details.dict())
         )
+        
+        return details
 
     def update_prompt(
         self,
