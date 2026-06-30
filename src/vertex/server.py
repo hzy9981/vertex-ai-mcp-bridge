@@ -75,7 +75,8 @@ def main(argv: Sequence[str]) -> None:
     mcp = fastmcp.FastMCP("VertexMcpServer")
 
     # Disable DNS rebinding protection for Cloud Run
-    mcp.settings.transport_security.enable_dns_rebinding_protection = False
+    if mcp.settings and mcp.settings.transport_security:
+        mcp.settings.transport_security.enable_dns_rebinding_protection = False
 
     # --- 自定义 HTTP 路由 (支持简单的 HTTP 调用和 Streaming) ---
     from starlette.responses import JSONResponse, StreamingResponse

@@ -47,7 +47,7 @@ python -m vertex.server --transport remote_sse --remote_sse_url https://YOUR-CLO
 {
   "mcpServers": {
     "vertex-bridge": {
-      "command": "python",
+      "command": "/home/hzy9981/vertex-ai-mcp-bridge-local/.venv/bin/python3",
       "args": ["-m", "vertex.server", "--transport", "stdio"],
       "env": {
         "GOOGLE_CLOUD_PROJECT": "your-project-id",
