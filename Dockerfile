@@ -17,10 +17,10 @@ ENV PATH="/root/.local/bin:${PATH}"
 COPY . /app
 
 # Install the project and its dependencies using uv
-RUN uv pip install --system .
+RUN uv sync --frozen --no-dev
 
 # Make port 8080 available to the world outside this container
 EXPOSE 8080
 
 # Run the server when the container launches
-CMD ["python", "-m", "vertex.server", "--transport=hybrid"]
+CMD ["uv", "run", "python", "-m", "vertex.server", "--transport=hybrid"]

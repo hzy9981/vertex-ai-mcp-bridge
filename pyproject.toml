@@ -24,6 +24,9 @@ build-backend = "setuptools.build_meta"
 [project.optional-dependencies]
 dev = ["ruff~=0.5.5", "pyright", "pytest", "ipython", "pre-commit"]
 
+[project.scripts]
+vertex-server = "vertex.server:main_entry"
+
 [tool.ruff]
 line-length = 80
 

@@ -1,6 +1,7 @@
 """Module for defining tools for Vertex AI Prompt management."""
 
 import itertools
+import json
 import os
 
 import pydantic

@@ -1,11 +1,20 @@
 """Module for defining tools for the CLI agent."""
 
+import asyncio
+import json
 import os
 import sys
 from collections.abc import Sequence
 
+import uvicorn
 from absl import app, flags
+from mcp.client.session import ClientSession
+from mcp.client.sse import sse_client
 from mcp.server import fastmcp
+from mcp.server.sse import SseServerTransport
+from mcp.server.stdio import stdio_server
+from starlette.responses import JSONResponse, StreamingResponse
+from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from . import tools
 from . import usage_tracker
@@ -21,11 +30,6 @@ flags.DEFINE_integer("port", int(os.environ.get("PORT", 8080)), "Port for SSE.")
 
 
 async def run_remote_proxy():
-    from mcp.client.session import ClientSession
-    from mcp.client.sse import sse_client
-    from mcp.server.stdio import stdio_server
-    import asyncio
-
     url = FLAGS.remote_sse_url
     print(f"Connecting to remote MCP server at {url}...", file=sys.stderr)
     
@@ -59,7 +63,6 @@ def main(argv: Sequence[str]) -> None:
         raise app.UsageError("Too many command-line arguments.")
 
     if FLAGS.transport == "remote_sse":
-        import asyncio
         asyncio.run(run_remote_proxy())
         return
 
@@ -75,13 +78,11 @@ def main(argv: Sequence[str]) -> None:
     mcp = fastmcp.FastMCP("VertexMcpServer")
 
     # Disable DNS rebinding protection for Cloud Run
-    if mcp.settings and mcp.settings.transport_security:
-        mcp.settings.transport_security.enable_dns_rebinding_protection = False
+    transport_security = getattr(mcp.settings, "transport_security", None)
+    if transport_security:
+        transport_security.enable_dns_rebinding_protection = False
 
     # --- 自定义 HTTP 路由 (支持简单的 HTTP 调用和 Streaming) ---
-    from starlette.responses import JSONResponse, StreamingResponse
-    import json
-    import asyncio
 
     @mcp.custom_route("/", methods=["GET", "POST"])
     async def root_handler(request):
@@ -161,9 +162,6 @@ def main(argv: Sequence[str]) -> None:
             tool_name: DashScope MCP 中的工具名称
             arguments: 传递给工具的参数字典
         """
-        from mcp.client.session import ClientSession
-        from mcp.client.sse import sse_client
-
         api_key = os.environ.get("DASHSCOPE_API_KEY")
         if not api_key:
             return "错误: 未设置 DASHSCOPE_API_KEY 环境变量。"
@@ -189,12 +187,6 @@ def main(argv: Sequence[str]) -> None:
     # --------------------------
 
     if FLAGS.transport in ["sse", "streamable-http", "hybrid"]:
-        import uvicorn
-        from mcp.server.sse import SseServerTransport
-        from starlette.applications import Starlette
-        from starlette.routing import Route, Mount
-        from starlette.middleware.trustedhost import TrustedHostMiddleware
-
         # 1. 准备 SSE 传输
         sse_transport = SseServerTransport("/messages")
 
@@ -234,5 +226,10 @@ def main(argv: Sequence[str]) -> None:
         mcp.run(transport="stdio")
 
 
-if __name__ == "__main__":
+def main_entry() -> None:
+    """Entry point for the console script."""
     app.run(main)
+
+
+if __name__ == "__main__":
+    main_entry()
