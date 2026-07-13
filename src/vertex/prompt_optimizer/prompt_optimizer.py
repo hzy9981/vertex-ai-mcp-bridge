@@ -1,12 +1,14 @@
 """Tools for Vertex AI Prompt Optimizer."""
 
 import json
+import sys
 from typing import Any
 
 import vertexai
 from google.cloud import storage
 from vertexai._genai import Client
 
+from .. import auth
 from . import storage as storage_utils
 from . import utils
 
@@ -15,19 +17,26 @@ class PromptOptimizer:
     def __init__(self, project: str, location: str):
         """Initializes the Vertex AI client and accesses the prompt_optimizer."""
         try:
-            vertexai.init(project=project, location=location)
-            self.client = Client(project=project, location=location)
-            self.storage_client = storage.Client(project=project)
+            creds = auth.get_credentials()
+            vertexai.init(project=project, location=location, credentials=creds)
+            self.client = Client(
+                project=project, location=location, credentials=creds
+            )
+            self.storage_client = storage.Client(
+                project=project, credentials=creds
+            )
             self.project = project
             self.location = location
             print(
                 "Initialized Vertex AI and Storage Clients for project:"
-                f" {project}, location: {location}"
+                f" {project}, location: {location}",
+                file=sys.stderr
             )
         except Exception as e:
             print(
                 "Error initializing Google Cloud Clients. Ensure gcloud is"
-                f" authenticated and APIs are enabled: {e}\n"
+                f" authenticated and APIs are enabled: {e}\n",
+                file=sys.stderr
             )
 
             self.client = None

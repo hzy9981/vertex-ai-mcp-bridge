@@ -7,7 +7,7 @@ import sys
 from collections.abc import Sequence
 
 import uvicorn
-from absl import app, flags
+from absl import app, flags, logging as absl_logging
 from mcp.client.session import ClientSession
 from mcp.client.sse import sse_client
 from mcp.server import fastmcp
@@ -59,6 +59,9 @@ async def run_remote_proxy():
 
 
 def main(argv: Sequence[str]) -> None:
+    # Ensure all logs go to stderr to avoid polluting stdout (important for MCP)
+    absl_logging.set_stderrthreshold('info')
+
     if len(argv) > 1:
         raise app.UsageError("Too many command-line arguments.")
 
@@ -83,6 +86,11 @@ def main(argv: Sequence[str]) -> None:
         transport_security.enable_dns_rebinding_protection = False
 
     # --- 自定义 HTTP 路由 (支持简单的 HTTP 调用和 Streaming) ---
+
+    @mcp.custom_route("/ping", methods=["GET"])
+    async def ping_handler(request):
+        """Health check route for Glama/Cloud Run."""
+        return JSONResponse({"status": "ok"})
 
     @mcp.custom_route("/", methods=["GET", "POST"])
     async def root_handler(request):
@@ -214,13 +222,20 @@ def main(argv: Sequence[str]) -> None:
 
         web_app = TrustedHostMiddleware(starlette_app, allowed_hosts=["*"])
 
-        print(f"Starting unified server in {FLAGS.transport} mode on port {FLAGS.port}")
+        print(f"Starting unified server in {FLAGS.transport} mode on port {FLAGS.port}", file=sys.stderr)
+        
+        # Configure uvicorn logging to stderr
+        log_config = uvicorn.config.LOGGING_CONFIG
+        log_config["handlers"]["default"]["stream"] = "ext://sys.stderr"
+        log_config["handlers"]["access"]["stream"] = "ext://sys.stderr"
+        
         uvicorn.run(
             web_app,
             host="0.0.0.0",
             port=FLAGS.port,
             proxy_headers=True,
             forwarded_allow_ips="*",
+            log_config=log_config,
         )
     else:
         mcp.run(transport="stdio")

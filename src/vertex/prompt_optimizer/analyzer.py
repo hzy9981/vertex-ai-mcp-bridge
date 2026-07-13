@@ -7,6 +7,7 @@ import io
 import json
 import os
 import re
+import sys
 from typing import Any
 
 import matplotlib
@@ -57,7 +58,8 @@ def get_performance_comparison(output_path: str) -> dict[str, Any]:
         except (FileNotFoundError, RuntimeError) as e:
             print(
                 "Warning: Could not read test_templates.json from"
-                f" {output_path}. Comparison will be unavailable. Original error: {e}"
+                f" {output_path}. Comparison will be unavailable. Original error: {e}",
+                file=sys.stderr
             )
 
     ucb_templates = None
@@ -69,7 +71,8 @@ def get_performance_comparison(output_path: str) -> dict[str, Any]:
         except (FileNotFoundError, RuntimeError):
             print(
                 f"Warning: Could not read templates.json from {output_path}. "
-                "Comparison will be unavailable. Original error: {e}"
+                "Comparison will be unavailable. Original error: {e}",
+                file=sys.stderr
             )
 
     initial_prompt = "Not available"

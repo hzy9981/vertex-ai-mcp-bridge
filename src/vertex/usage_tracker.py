@@ -2,6 +2,7 @@ import os
 import json
 import sqlite3
 import datetime
+import sys
 import tiktoken
 from typing import Optional
 
@@ -45,7 +46,7 @@ def log_usage(tool_name: str, model_name: str, input_text: str, output_text: str
     """, (tool_name, model_name, input_tokens, output_tokens, total_tokens, json.dumps(metadata)))
     conn.commit()
     conn.close()
-    print(f"[Usage Stats] Tool: {tool_name}, Tokens: {total_tokens} ({input_tokens} in / {output_tokens} out)")
+    print(f"[Usage Stats] Tool: {tool_name}, Tokens: {total_tokens} ({input_tokens} in / {output_tokens} out)", file=sys.stderr)
 
 def get_stats():
     conn = sqlite3.connect(DB_PATH)

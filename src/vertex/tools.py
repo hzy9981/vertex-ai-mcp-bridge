@@ -3,6 +3,7 @@
 import itertools
 import json
 import os
+import sys
 
 import pydantic
 from google.api_core import exceptions
@@ -11,6 +12,7 @@ from google.genai import types as genai_types
 from vertexai import types as vertexai_types
 from vertexai._genai import Client
 
+from . import auth
 from . import usage_tracker
 
 _DEFAULT_LOCATION = "us-central1"
@@ -137,9 +139,15 @@ class VertexPromptManager:
         self._project_id = final_project_id
         self._location_id = final_location_id
         print(
-            f"Using Project: {final_project_id}, Location: {final_location_id}"
+            f"Using Project: {final_project_id}, Location: {final_location_id}",
+            file=sys.stderr
         )
-        return Client(project=final_project_id, location=final_location_id)
+        creds = auth.get_credentials()
+        return Client(
+            project=final_project_id,
+            location=final_location_id,
+            credentials=creds,
+        )
 
     def read_prompt(
         self,
