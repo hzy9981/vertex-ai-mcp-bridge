@@ -1,10 +1,14 @@
 # Vertex AI & DashScope Bridge MCP Server
 
-[![MCP Specification](https://img.shields.io/badge/MCP-Standard-blue)](https://modelcontextprotocol.io)
-[![Deploy to Cloud Run](https://img.shields.io/badge/Deploy-Cloud%20Run-orange)](https://cloud.google.com/run)
+[![Official MCP List](https://img.shields.io/badge/MCP-Listed-blue)](https://modelcontextprotocol.io/examples/servers)
+[![Deploy to Cloud Run](https://img.shields.io/badge/Deploy-Cloud%20Run-orange)](DEPLOY.md)
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
 
 这是一个全能型的 Model Context Protocol (MCP) 服务器，旨在连接 Google Vertex AI 的强大能力与您的本地 AI 助手。它不仅支持提示词管理与自动化优化，还集成了跨平台的工具代理（如阿里云 DashScope）。
+
+## 🚀 快速链接
+- **[官方 MCP 列表](https://modelcontextprotocol.io/examples/servers)** (搜索 "Vertex AI Bridge")
+- **[详细部署指南 (Cloud Run)](DEPLOY.md)** - 10 分钟内完成生产级部署。
 
 ## ✨ 核心特性
 
