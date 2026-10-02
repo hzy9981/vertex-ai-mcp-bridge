@@ -4,6 +4,8 @@
 [![Deploy to Cloud Run](https://img.shields.io/badge/Deploy-Cloud%20Run-orange)](DEPLOY.md)
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
 
+[English](README.md) | [中文](README.zh.md) | [日本語](README.ja.md)
+
 This is a comprehensive Model Context Protocol (MCP) server designed to bridge the powerful capabilities of Google Vertex AI with your local AI assistants. It not only supports prompt management and automatic optimization but also enables seamless cross-cloud tool coordination.
 
 ---
