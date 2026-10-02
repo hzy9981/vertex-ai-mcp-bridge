@@ -4,47 +4,49 @@
 [![Deploy to Cloud Run](https://img.shields.io/badge/Deploy-Cloud%20Run-orange)](DEPLOY.md)
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
 
-这是一个全能型的 Model Context Protocol (MCP) 服务器，旨在连接 Google Vertex AI 的强大能力与您的本地 AI 助手。它不仅支持提示词管理与自动化优化，还集成了跨平台的工具代理（如阿里云 DashScope）。
+This is a comprehensive Model Context Protocol (MCP) server designed to bridge the powerful capabilities of Google Vertex AI with your local AI assistants. It not only supports prompt management and automatic optimization but also enables seamless cross-cloud tool coordination.
 
-## 🚀 快速链接
-- **[官方 MCP 列表](https://modelcontextprotocol.io/examples/servers)** (搜索 "Vertex AI Bridge")
-- **[详细部署指南 (Cloud Run)](DEPLOY.md)** - 10 分钟内完成生产级部署。
+---
 
-## ✨ 核心特性
+## 🚀 Quick Links
+- **[Official MCP List](https://modelcontextprotocol.io/examples/servers)** (Search "Vertex AI Bridge")
+- **[Detailed Deployment Guide (Cloud Run)](DEPLOY.md)** - Production-ready deployment in 10 minutes.
 
-- **多传输协议支持**: 
-  - `stdio`: 最适合 Cursor, VS Code 等本地 IDE。
-  - `sse`: 标准 Server-Sent Events，适用于 Web 客户端。
-  - `streamable-http`: **(New)** 更健壮的流式 HTTP 协议，适合云端长连接。
-  - `hybrid`: **(New)** 同时启动多种协议，适配不同集成需求。
-- **远程 SSE 代理模式**: 即使您的本地工具（如 Cursor）不支持远程 SSE，您也可以通过 `remote_sse` 传输方式将云端服务透明地桥接到本地。
-- **全方位提示词工程**: 内置 Vertex AI Prompt Management 的 CRUD 及其最前沿的数据驱动优化工具。
-- **跨云工具代理**: 支持通过 `call_dashscope_mcp` 直接调用远程 DashScope 服务。
+## ✨ Core Features
 
-## 🛠 提供的工具
+- **Multi-Transport Protocol Support**: 
+  - `stdio`: Best for local IDEs like Cursor, VS Code.
+  - `sse`: Standard Server-Sent Events, suitable for web clients.
+  - `streamable-http`: **(New)** More robust streaming HTTP protocol for cloud long-lived connections.
+  - `hybrid`: **(New)** Launch multiple protocols simultaneously to adapt to different integration needs.
+- **Remote SSE Proxy Mode**: Even if your local tools (like Cursor) don't support remote SSE, you can transparently bridge cloud services to local via `remote_sse` transport.
+- **Comprehensive Prompt Engineering**: Built-in CRUD for Vertex AI Prompt Management and state-of-the-art data-driven optimization tools.
+- **Cross-Cloud Tool Proxy**: Support for directly calling remote DashScope services via `call_dashscope_mcp`.
 
-| 工具类别 | 工具名称 | 功能描述 |
+## 🛠 Provided Tools
+
+| Tool Category | Tool Name | Description |
 | :--- | :--- | :--- |
-| **Prompt CRUD** | `create_prompt`, `read_prompt`, `update_prompt`, `list_prompts`, `delete_prompt` | Vertex AI 提示词的全生命周期管理 |
-| **Optimization** | `run_few_shot_optimization`, `run_data_driven_optimize`, `analyze_data_driven_optimize_results` | 少样本及数据驱动的提示词自动调优 |
-| **Proxy** | `call_dashscope_mcp` | 代理调用远程 DashScope MCP 工具 |
+| **Prompt CRUD** | `create_prompt`, `read_prompt`, `update_prompt`, `list_prompts`, `delete_prompt` | Full lifecycle management for Vertex AI prompts |
+| **Optimization** | `run_few_shot_optimization`, `run_data_driven_optimize`, `analyze_data_driven_optimize_results` | Few-shot and data-driven automatic prompt optimization |
+| **Proxy** | `call_dashscope_mcp` | Proxy calls to remote DashScope MCP tools |
 
-## 🚀 部署与运行
+## 🚀 Deployment and Running
 
-### 1. 云端部署 (Cloud Run)
-直接运行我们提供的全自动部署脚本：
+### 1. Cloud Deployment (Cloud Run)
+Run our fully automated deployment script directly:
 ```bash
 chmod +x deploy_cloud_run.sh
 ./deploy_cloud_run.sh
 ```
 
-### 2. 本地代理模式 (连接到已部署的服务)
-如果您的客户端（如 Cursor）只支持本地 Stdio 命令行，但您希望使用云端部署好的服务：
+### 2. Local Proxy Mode (Connect to Deployed Service)
+If your client (like Cursor) only supports local Stdio command line but you want to use the cloud-deployed service:
 ```bash
 python -m vertex.server --transport remote_sse --remote_sse_url https://YOUR-CLOUD-RUN-URL/sse
 ```
 
-## 💻 客户端集成示例
+## 💻 Client Integration Examples
 
 ### Cursor / Claude Desktop (Stdio)
 ```json
@@ -62,5 +64,5 @@ python -m vertex.server --transport remote_sse --remote_sse_url https://YOUR-CLO
 }
 ```
 
-## 📄 开源协议
+## 📄 License
 [Apache-2.0 License](LICENSE)
