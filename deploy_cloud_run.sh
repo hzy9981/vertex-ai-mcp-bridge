@@ -29,7 +29,7 @@ gcloud run deploy $SERVICE_NAME
     --platform managed 
     --region $LOCATION 
     --allow-unauthenticated 
-    --set-env-vars GOOGLE_CLOUD_PROJECT=$PROJECT_ID,PORT=8080 
+    --set-env-vars GOOGLE_CLOUD_PROJECT=$PROJECT_ID,PORT=8080,DEEPSEEK_API_KEY=$DEEPSEEK_API_KEY 
     --quiet
 
 echo "部署完成！"
