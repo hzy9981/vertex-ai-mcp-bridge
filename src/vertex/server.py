@@ -16,7 +16,7 @@ from mcp.server.stdio import stdio_server
 from starlette.responses import JSONResponse, StreamingResponse
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
-from . import tools
+from . import generative_tools, tools
 from . import usage_tracker
 from .prompt_optimizer import analyzer, prompt_optimizer
 
@@ -154,6 +154,9 @@ def main(argv: Sequence[str]) -> None:
         analyzer.analyze_results, name="analyze_data_driven_optimize_results"
     )
     mcp.add_tool(analyzer.generate_report, name="generate_html_report")
+
+    mcp.add_tool(generative_tools.generate_with_vertex)
+    mcp.add_tool(generative_tools.generate_with_deepseek)
 
     # --- Usage Statistics Tool ---
     @mcp.tool()
