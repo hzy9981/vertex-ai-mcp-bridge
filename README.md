@@ -10,6 +10,17 @@ This is a comprehensive Model Context Protocol (MCP) server designed to bridge t
 
 ---
 
+## 🤖 Generation API Examples
+
+Both tools share parameters: `prompt`, `model`, `temperature` (0.7), `max_tokens` (1024), `top_p` (0.95), `top_k` (40, ignored by DeepSeek), `system_instruction`. They return `text`, `model`, `finish_reason`, `input_tokens`, `output_tokens`.
+
+```json
+{"tool": "generate_with_vertex", "arguments": {"prompt": "Hello", "model": "gemini-2.0-flash"}}
+{"tool": "generate_with_deepseek", "arguments": {"prompt": "Hello", "model": "deepseek-flash"}}
+```
+
+Vertex AI uses Google credentials; DeepSeek requires `DEEPSEEK_API_KEY`.
+
 ## 🚀 Quick Links
 - **[Official MCP List](https://modelcontextprotocol.io/examples/servers)** (Search "Vertex AI Bridge")
 - **[Detailed Deployment Guide (Cloud Run)](DEPLOY.md)** - Production-ready deployment in 10 minutes.
@@ -32,6 +43,7 @@ This is a comprehensive Model Context Protocol (MCP) server designed to bridge t
 | **Prompt CRUD** | `create_prompt`, `read_prompt`, `update_prompt`, `list_prompts`, `delete_prompt` | Full lifecycle management for Vertex AI prompts |
 | **Optimization** | `run_few_shot_optimization`, `run_data_driven_optimize`, `analyze_data_driven_optimize_results` | Few-shot and data-driven automatic prompt optimization |
 | **Proxy** | `call_dashscope_mcp` | Proxy calls to remote DashScope MCP tools |
+| **Generation** | `generate_with_vertex`, `generate_with_deepseek` | General text generation via OpenAI-compatible APIs (Vertex AI Gemini: `gemini-2.0-flash`, `gemini-1.5-pro`, `gemini-1.5-flash`; DeepSeek: `deepseek-flash`, `deepseek-v4-pro`) |
 
 ## 🚀 Deployment and Running
 
@@ -59,7 +71,8 @@ python -m vertex.server --transport remote_sse --remote_sse_url https://YOUR-CLO
       "args": ["-m", "vertex.server", "--transport", "stdio"],
       "env": {
         "GOOGLE_CLOUD_PROJECT": "your-project-id",
-        "DASHSCOPE_API_KEY": "your-key"
+        "DASHSCOPE_API_KEY": "your-key",
+        "DEEPSEEK_API_KEY": "your-key"
       }
     }
   }
