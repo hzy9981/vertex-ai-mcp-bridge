@@ -10,6 +10,17 @@
 
 ---
 
+## 🤖 生成 API 示例
+
+两个工具参数一致：`prompt`、`model`、`temperature`（0.7）、`max_tokens`（1024）、`top_p`（0.95）、`top_k`（40，DeepSeek 忽略）、`system_instruction`。返回 `text`、`model`、`finish_reason`、`input_tokens`、`output_tokens`。
+
+```json
+{"tool": "generate_with_vertex", "arguments": {"prompt": "你好", "model": "gemini-2.0-flash"}}
+{"tool": "generate_with_deepseek", "arguments": {"prompt": "你好", "model": "deepseek-flash"}}
+```
+
+Vertex AI 使用 Google 凭证；DeepSeek 需要设置 `DEEPSEEK_API_KEY`。
+
 ## 🚀 快速链接
 - **[官方 MCP 列表](https://modelcontextprotocol.io/examples/servers)** (搜索 "Vertex AI Bridge")
 - **[详细部署指南 (Cloud Run)](DEPLOY.md)** - 10 分钟内完成生产级部署。
@@ -32,6 +43,7 @@
 | **Prompt CRUD** | `create_prompt`, `read_prompt`, `update_prompt`, `list_prompts`, `delete_prompt` | Vertex AI 提示词的全生命周期管理 |
 | **优化工具** | `run_few_shot_optimization`, `run_data_driven_optimize`, `analyze_data_driven_optimize_results` | 少样本及数据驱动的提示词自动调优 |
 | **代理工具** | `call_dashscope_mcp` | 代理调用远程 DashScope MCP 工具 |
+| **生成 API** | `generate_with_vertex`, `generate_with_deepseek` | 基于 OpenAI 兼容接口的通用文本生成（Vertex AI Gemini：`gemini-2.0-flash`、`gemini-1.5-pro`、`gemini-1.5-flash`；DeepSeek：`deepseek-flash`、`deepseek-v4-pro`） |
 
 ## 🚀 部署与运行
 
@@ -59,7 +71,8 @@ python -m vertex.server --transport remote_sse --remote_sse_url https://YOUR-CLO
       "args": ["-m", "vertex.server", "--transport", "stdio"],
       "env": {
         "GOOGLE_CLOUD_PROJECT": "your-project-id",
-        "DASHSCOPE_API_KEY": "your-key"
+        "DASHSCOPE_API_KEY": "your-key",
+        "DEEPSEEK_API_KEY": "your-key"
       }
     }
   }

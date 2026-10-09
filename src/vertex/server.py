@@ -18,6 +18,8 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from . import tools
 from . import usage_tracker
+from .deepseek_client import DeepSeekClient
+from .vertex_generative_client import VertexGenerativeClient
 from .prompt_optimizer import analyzer, prompt_optimizer
 
 FLAGS = flags.FLAGS
@@ -160,6 +162,95 @@ def main(argv: Sequence[str]) -> None:
     async def get_token_usage_stats() -> dict:
         """获取 MCP 服务的 token 使用统计信息。"""
         return usage_tracker.get_stats()
+
+    # --- 通用生成 API (OpenAI 兼容) ---
+    vertex_gen_client: VertexGenerativeClient | None = None
+    deepseek_client: DeepSeekClient | None = None
+
+    @mcp.tool()
+    async def generate_with_vertex(
+        prompt: str,
+        model: str = "gemini-2.0-flash",
+        temperature: float = 0.7,
+        max_tokens: int = 1024,
+        top_p: float = 0.95,
+        top_k: int = 40,
+        system_instruction: str | None = None,
+    ) -> dict:
+        """使用 Vertex AI (OpenAI 兼容接口) 生成内容。
+
+        Args:
+            prompt: 用户提示词
+            model: gemini-2.0-flash, gemini-1.5-pro 或 gemini-1.5-flash
+            temperature: 采样温度 (0-1)
+            max_tokens: 最大输出 token 数
+            top_p: Top-P 采样参数
+            top_k: Top-K 采样参数
+            system_instruction: 系统指令
+        """
+        nonlocal vertex_gen_client
+        if vertex_gen_client is None:
+            vertex_gen_client = VertexGenerativeClient(
+                project_id=project_id, location=location_id
+            )
+        result = await asyncio.to_thread(
+            vertex_gen_client.generate_content,
+            prompt=prompt,
+            model=model,
+            temperature=temperature,
+            max_tokens=max_tokens,
+            top_p=top_p,
+            top_k=top_k,
+            system_instruction=system_instruction,
+        )
+        usage_tracker.log_usage(
+            tool_name="generate_with_vertex",
+            model_name=model,
+            input_text=(system_instruction or "") + prompt,
+            output_text=result["text"],
+        )
+        return result
+
+    @mcp.tool()
+    async def generate_with_deepseek(
+        prompt: str,
+        model: str = "deepseek-flash",
+        temperature: float = 0.7,
+        max_tokens: int = 1024,
+        top_p: float = 0.95,
+        top_k: int | None = None,
+        system_instruction: str | None = None,
+    ) -> dict:
+        """使用 DeepSeek (OpenAI 兼容接口) 生成内容。
+
+        Args:
+            prompt: 用户提示词
+            model: deepseek-flash 或 deepseek-v4-pro
+            temperature: 采样温度 (0-1)
+            max_tokens: 最大输出 token 数
+            top_p: Top-P 采样参数
+            top_k: 为与 Vertex 工具保持一致而保留，DeepSeek 会忽略
+            system_instruction: 系统指令
+        """
+        nonlocal deepseek_client
+        if deepseek_client is None:
+            deepseek_client = DeepSeekClient()
+        result = await asyncio.to_thread(
+            deepseek_client.generate_content,
+            prompt=prompt,
+            model=model,
+            temperature=temperature,
+            max_tokens=max_tokens,
+            top_p=top_p,
+            system_instruction=system_instruction,
+        )
+        usage_tracker.log_usage(
+            tool_name="generate_with_deepseek",
+            model_name=model,
+            input_text=(system_instruction or "") + prompt,
+            output_text=result["text"],
+        )
+        return result
 
     # --- 集成 DashScope MCP ---
     @mcp.tool()

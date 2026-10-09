@@ -10,6 +10,17 @@
 
 ---
 
+## 🤖 生成 API の使用例
+
+両ツールのパラメータは共通です：`prompt`、`model`、`temperature`（0.7）、`max_tokens`（1024）、`top_p`（0.95）、`top_k`（40、DeepSeek では無視）、`system_instruction`。戻り値は `text`、`model`、`finish_reason`、`input_tokens`、`output_tokens`。
+
+```json
+{"tool": "generate_with_vertex", "arguments": {"prompt": "こんにちは", "model": "gemini-2.0-flash"}}
+{"tool": "generate_with_deepseek", "arguments": {"prompt": "こんにちは", "model": "deepseek-flash"}}
+```
+
+Vertex AI は Google 認証情報を使用し、DeepSeek には `DEEPSEEK_API_KEY` が必要です。
+
 ## 🚀 クイックリンク
 - **[公式 MCP リスト](https://modelcontextprotocol.io/examples/servers)** ("Vertex AI Bridge" で検索)
 - **[詳細なデプロイガイド (Cloud Run)](DEPLOY.md)** - わずか10分で本番環境デプロイを完了。
@@ -32,6 +43,7 @@
 | **プロンプト CRUD** | `create_prompt`, `read_prompt`, `update_prompt`, `list_prompts`, `delete_prompt` | Vertex AI プロンプトの完全なライフサイクル管理 |
 | **最適化** | `run_few_shot_optimization`, `run_data_driven_optimize`, `analyze_data_driven_optimize_results` | フューショット及びデータ駆動型の自動プロンプト最適化 |
 | **プロキシ** | `call_dashscope_mcp` | リモート DashScope MCP ツールへのプロキシ呼び出し |
+| **生成 API** | `generate_with_vertex`, `generate_with_deepseek` | OpenAI 互換 API による汎用テキスト生成（Vertex AI Gemini：`gemini-2.0-flash`、`gemini-1.5-pro`、`gemini-1.5-flash`、DeepSeek：`deepseek-flash`、`deepseek-v4-pro`） |
 
 ## 🚀 デプロイと実行
 
@@ -59,7 +71,8 @@ python -m vertex.server --transport remote_sse --remote_sse_url https://YOUR-CLO
       "args": ["-m", "vertex.server", "--transport", "stdio"],
       "env": {
         "GOOGLE_CLOUD_PROJECT": "your-project-id",
-        "DASHSCOPE_API_KEY": "your-key"
+        "DASHSCOPE_API_KEY": "your-key",
+        "DEEPSEEK_API_KEY": "your-key"
       }
     }
   }
