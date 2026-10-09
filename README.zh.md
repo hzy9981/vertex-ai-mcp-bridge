@@ -32,6 +32,7 @@
 | **Prompt CRUD** | `create_prompt`, `read_prompt`, `update_prompt`, `list_prompts`, `delete_prompt` | Vertex AI 提示词的全生命周期管理 |
 | **优化工具** | `run_few_shot_optimization`, `run_data_driven_optimize`, `analyze_data_driven_optimize_results` | 少样本及数据驱动的提示词自动调优 |
 | **代理工具** | `call_dashscope_mcp` | 代理调用远程 DashScope MCP 工具 |
+| **代理工具** | `call_deepseek` | 通过 OpenAI 兼容接口调用 DeepSeek 模型（`deepseek-flash`、`deepseek-v4-pro`），需设置 `DEEPSEEK_API_KEY` |
 
 ## 🚀 部署与运行
 
@@ -59,7 +60,8 @@ python -m vertex.server --transport remote_sse --remote_sse_url https://YOUR-CLO
       "args": ["-m", "vertex.server", "--transport", "stdio"],
       "env": {
         "GOOGLE_CLOUD_PROJECT": "your-project-id",
-        "DASHSCOPE_API_KEY": "your-key"
+        "DASHSCOPE_API_KEY": "your-key",
+        "DEEPSEEK_API_KEY": "your-deepseek-key"
       }
     }
   }

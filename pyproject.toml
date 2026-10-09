@@ -15,6 +15,7 @@ dependencies = [
     "uvicorn>=0.30.0",
     "starlette",
     "tiktoken",
+    "openai>=1.0.0",
 ]
 
 [build-system]

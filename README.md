@@ -32,6 +32,7 @@ This is a comprehensive Model Context Protocol (MCP) server designed to bridge t
 | **Prompt CRUD** | `create_prompt`, `read_prompt`, `update_prompt`, `list_prompts`, `delete_prompt` | Full lifecycle management for Vertex AI prompts |
 | **Optimization** | `run_few_shot_optimization`, `run_data_driven_optimize`, `analyze_data_driven_optimize_results` | Few-shot and data-driven automatic prompt optimization |
 | **Proxy** | `call_dashscope_mcp` | Proxy calls to remote DashScope MCP tools |
+| **Proxy** | `call_deepseek` | Call DeepSeek models (`deepseek-flash`, `deepseek-v4-pro`) via the OpenAI-compatible API; requires `DEEPSEEK_API_KEY` |
 
 ## 🚀 Deployment and Running
 
@@ -59,7 +60,8 @@ python -m vertex.server --transport remote_sse --remote_sse_url https://YOUR-CLO
       "args": ["-m", "vertex.server", "--transport", "stdio"],
       "env": {
         "GOOGLE_CLOUD_PROJECT": "your-project-id",
-        "DASHSCOPE_API_KEY": "your-key"
+        "DASHSCOPE_API_KEY": "your-key",
+        "DEEPSEEK_API_KEY": "your-deepseek-key"
       }
     }
   }

@@ -16,7 +16,7 @@ from mcp.server.stdio import stdio_server
 from starlette.responses import JSONResponse, StreamingResponse
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
-from . import tools
+from . import deepseek_client, tools
 from . import usage_tracker
 from .prompt_optimizer import analyzer, prompt_optimizer
 
@@ -192,6 +192,51 @@ def main(argv: Sequence[str]) -> None:
                 )
                 
                 return res_str
+    # --- 集成 DeepSeek API ---
+    @mcp.tool()
+    async def call_deepseek(
+        prompt: str,
+        model: str = deepseek_client.DEFAULT_MODEL,
+        system_instruction: str = "",
+        temperature: float | None = None,
+        max_tokens: int | None = None,
+        stream: bool = False,
+    ) -> str:
+        """调用 DeepSeek API (OpenAI 兼容接口)。
+
+        Args:
+            prompt: 用户提示词
+            model: 模型名称 (deepseek-flash 或 deepseek-v4-pro)
+            system_instruction: 可选的系统指令
+            temperature: 采样温度
+            max_tokens: 最大生成 token 数
+            stream: 是否使用流式调用 (结果会合并后返回)
+        """
+        try:
+            kwargs = dict(
+                system_instruction=system_instruction or None,
+                model=model,
+                temperature=temperature,
+                max_tokens=max_tokens,
+            )
+            if stream:
+                parts = []
+                async for piece in deepseek_client.chat_stream(prompt, **kwargs):
+                    parts.append(piece)
+                result = "".join(parts)
+            else:
+                result = await deepseek_client.chat(prompt, **kwargs)
+        except ValueError as e:
+            return f"错误: {e}"
+
+        usage_tracker.log_usage(
+            tool_name="deepseek",
+            model_name=model,
+            input_text=f"{system_instruction}\n{prompt}",
+            output_text=result,
+        )
+        return result
+
     # --------------------------
 
     if FLAGS.transport in ["sse", "streamable-http", "hybrid"]:
