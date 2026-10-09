@@ -15,3 +15,6 @@ server:
     DASHSCOPE_API_KEY:
       description: "Alibaba Cloud DashScope API Key"
       required: true
+    DEEPSEEK_API_KEY:
+      description: "DeepSeek API Key (for generate_with_deepseek)"
+      required: false

@@ -18,7 +18,9 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from . import tools
 from . import usage_tracker
+from .deepseek_client import DeepSeekClient
 from .prompt_optimizer import analyzer, prompt_optimizer
+from .vertex_generative_client import VertexGenerativeClient
 
 FLAGS = flags.FLAGS
 
@@ -160,6 +162,85 @@ def main(argv: Sequence[str]) -> None:
     async def get_token_usage_stats() -> dict:
         """获取 MCP 服务的 token 使用统计信息。"""
         return usage_tracker.get_stats()
+
+    # --- 通用模型生成 API (Vertex AI / DeepSeek) ---
+    vertex_gen_client = VertexGenerativeClient(
+        project_id=project_id, location=location_id
+    )
+    deepseek_client = DeepSeekClient()
+
+    @mcp.tool()
+    async def generate_with_vertex(
+        prompt: str,
+        model: str = "gemini-2.0-flash",
+        temperature: float = 0.7,
+        max_tokens: int = 1024,
+        top_p: float = 0.95,
+        top_k: int = 40,
+        system_instruction: str | None = None,
+    ) -> dict:
+        """使用 Vertex AI Gemini 模型生成文本。
+
+        Args:
+            prompt: 用户提示词
+            model: gemini-2.0-flash, gemini-1.5-pro 或 gemini-1.5-flash
+            temperature: 生成多样性
+            max_tokens: 最大输出 token 数
+            top_p: Top-P 采样参数
+            top_k: Top-K 采样参数
+            system_instruction: 系统指令
+        """
+        result = await vertex_gen_client.generate_content(
+            prompt=prompt,
+            model=model,
+            temperature=temperature,
+            max_tokens=max_tokens,
+            top_p=top_p,
+            top_k=top_k,
+            system_instruction=system_instruction,
+        )
+        usage_tracker.log_usage(
+            tool_name="generate_with_vertex",
+            model_name=model,
+            input_text=(system_instruction or "") + prompt,
+            output_text=result["text"],
+        )
+        return result
+
+    @mcp.tool()
+    async def generate_with_deepseek(
+        prompt: str,
+        model: str = "deepseek-flash",
+        temperature: float = 0.7,
+        max_tokens: int = 1024,
+        top_p: float = 0.95,
+        system_instruction: str | None = None,
+    ) -> dict:
+        """使用 DeepSeek API 生成文本 (需要 DEEPSEEK_API_KEY)。
+
+        Args:
+            prompt: 用户提示词
+            model: deepseek-flash 或 deepseek-v4-pro
+            temperature: 生成多样性
+            max_tokens: 最大输出 token 数
+            top_p: Top-P 采样参数
+            system_instruction: 系统指令
+        """
+        result = await deepseek_client.generate_content(
+            prompt=prompt,
+            model=model,
+            temperature=temperature,
+            max_tokens=max_tokens,
+            top_p=top_p,
+            system_instruction=system_instruction,
+        )
+        usage_tracker.log_usage(
+            tool_name="generate_with_deepseek",
+            model_name=model,
+            input_text=(system_instruction or "") + prompt,
+            output_text=result["text"],
+        )
+        return result
 
     # --- 集成 DashScope MCP ---
     @mcp.tool()
