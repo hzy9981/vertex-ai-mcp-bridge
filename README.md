@@ -32,7 +32,7 @@ This is a comprehensive Model Context Protocol (MCP) server designed to bridge t
 | **Prompt CRUD** | `create_prompt`, `read_prompt`, `update_prompt`, `list_prompts`, `delete_prompt` | Full lifecycle management for Vertex AI prompts |
 | **Optimization** | `run_few_shot_optimization`, `run_data_driven_optimize`, `analyze_data_driven_optimize_results` | Few-shot and data-driven automatic prompt optimization |
 | **Proxy** | `call_dashscope_mcp` | Proxy calls to remote DashScope MCP tools |
-| **Generation** | `generate_with_vertex`, `generate_with_deepseek` | General text generation via Vertex AI Gemini models (gemini-2.0-flash, gemini-1.5-pro, gemini-1.5-flash) and DeepSeek (deepseek-flash, deepseek-v4-pro) |
+| **Generation** | `generate_with_vertex`, `generate_with_deepseek` | General text generation via Vertex AI Gemini models (gemini-2.5-flash, gemini-2.5-pro, gemini-2.5-flash-lite) and DeepSeek (deepseek-flash, deepseek-v4-pro) |
 
 ## 🚀 Deployment and Running
 
@@ -71,7 +71,7 @@ python -m vertex.server --transport remote_sse --remote_sse_url https://YOUR-CLO
 ### Generation API Examples
 ```python
 # Vertex AI (Gemini)
-result = await session.call_tool("generate_with_vertex", {"prompt": "Hello", "model": "gemini-2.0-flash", "temperature": 0.7, "max_tokens": 512, "system_instruction": "Be concise."})
+result = await session.call_tool("generate_with_vertex", {"prompt": "Hello", "model": "gemini-2.5-flash", "temperature": 0.7, "max_tokens": 512, "system_instruction": "Be concise."})
 
 # DeepSeek (requires DEEPSEEK_API_KEY)
 result = await session.call_tool("generate_with_deepseek", {"prompt": "Hello", "model": "deepseek-flash"})
