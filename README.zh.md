@@ -32,7 +32,7 @@
 | **Prompt CRUD** | `create_prompt`, `read_prompt`, `update_prompt`, `list_prompts`, `delete_prompt` | Vertex AI 提示词的全生命周期管理 |
 | **优化工具** | `run_few_shot_optimization`, `run_data_driven_optimize`, `analyze_data_driven_optimize_results` | 少样本及数据驱动的提示词自动调优 |
 | **代理工具** | `call_dashscope_mcp` | 代理调用远程 DashScope MCP 工具 |
-| **生成 API** | `generate_with_vertex`, `generate_with_deepseek` | 通过 Vertex AI Gemini 模型 (gemini-2.0-flash, gemini-1.5-pro, gemini-1.5-flash) 与 DeepSeek (deepseek-flash, deepseek-v4-pro) 进行通用文本生成 |
+| **生成 API** | `generate_with_vertex`, `generate_with_deepseek` | 通过 Vertex AI Gemini 模型 (gemini-2.5-flash, gemini-2.5-pro, gemini-2.5-flash-lite) 与 DeepSeek (deepseek-flash, deepseek-v4-pro) 进行通用文本生成 |
 
 ## 🚀 部署与运行
 
@@ -71,7 +71,7 @@ python -m vertex.server --transport remote_sse --remote_sse_url https://YOUR-CLO
 ### 生成 API 使用示例
 ```python
 # Vertex AI (Gemini)
-result = await session.call_tool("generate_with_vertex", {"prompt": "你好", "model": "gemini-2.0-flash", "temperature": 0.7, "max_tokens": 512, "system_instruction": "请简洁回答。"})
+result = await session.call_tool("generate_with_vertex", {"prompt": "你好", "model": "gemini-2.5-flash", "temperature": 0.7, "max_tokens": 512, "system_instruction": "请简洁回答。"})
 
 # DeepSeek (需要设置 DEEPSEEK_API_KEY)
 result = await session.call_tool("generate_with_deepseek", {"prompt": "你好", "model": "deepseek-flash"})

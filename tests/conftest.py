@@ -49,3 +49,5 @@ def mock_credentials():
     creds = MagicMock()
     creds.token = "fake-token"
     return creds
+
+collect_ignore = ["manual_test.py"]

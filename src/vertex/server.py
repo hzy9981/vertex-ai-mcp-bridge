@@ -172,7 +172,7 @@ def main(argv: Sequence[str]) -> None:
     @mcp.tool()
     async def generate_with_vertex(
         prompt: str,
-        model: str = "gemini-2.0-flash",
+        model: str = "gemini-2.5-flash",
         temperature: float = 0.7,
         max_tokens: int = 1024,
         top_p: float = 0.95,
@@ -183,9 +183,10 @@ def main(argv: Sequence[str]) -> None:
 
         Args:
             prompt: 用户提示词
-            model: gemini-2.0-flash, gemini-1.5-pro 或 gemini-1.5-flash
+            model: gemini-2.5-flash (默认), gemini-2.5-pro 或 gemini-2.5-flash-lite；其他名称会交由 Vertex 校验
             temperature: 生成多样性
-            max_tokens: 最大输出 token 数
+            max_tokens: 最大输出 token 数。注意：Gemini 2.5 的 "thinking" token 也计入此上限，
+                过小的值（如 512）可能截断可见回答，建议 1024 以上
             top_p: Top-P 采样参数
             top_k: Top-K 采样参数
             system_instruction: 系统指令

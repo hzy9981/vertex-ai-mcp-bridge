@@ -11,6 +11,13 @@ from vertex.tools import (
 
 class TestVertexPromptManager(unittest.TestCase):
     def setUp(self):
+        for target in (
+            "vertex.tools.auth.get_credentials",
+            "vertex.tools.usage_tracker.log_usage",
+        ):
+            patcher = patch(target, return_value=None)
+            patcher.start()
+            self.addCleanup(patcher.stop)
         self.manager = VertexPromptManager()
         self.mock_client = MagicMock()
 
@@ -22,7 +29,7 @@ class TestVertexPromptManager(unittest.TestCase):
         )
         self.assertEqual(client, self.mock_client)
         mock_client_constructor.assert_called_with(
-            project="test-project", location="test-location"
+            project="test-project", location="test-location", credentials=None
         )
 
     def test_build_prompt_details(self):

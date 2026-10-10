@@ -11,7 +11,7 @@ import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
-from vertex.deepseek_client import DeepSeekClient  # noqa: E402
+from vertex.deepseek_client import SUPPORTED_MODELS, DeepSeekClient  # noqa: E402
 from vertex.vertex_generative_client import VertexGenerativeClient  # noqa: E402
 
 PROMPT = "Say hello in one short sentence."
@@ -21,7 +21,7 @@ async def check_deepseek() -> bool:
     if not os.environ.get("DEEPSEEK_API_KEY"):
         print("[SKIP] DeepSeek: DEEPSEEK_API_KEY not set")
         return True
-    for model in DeepSeekClient.SUPPORTED_MODELS:
+    for model in SUPPORTED_MODELS:
         try:
             result = await DeepSeekClient().generate_content(
                 PROMPT, model=model

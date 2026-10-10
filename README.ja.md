@@ -32,7 +32,7 @@
 | **プロンプト CRUD** | `create_prompt`, `read_prompt`, `update_prompt`, `list_prompts`, `delete_prompt` | Vertex AI プロンプトの完全なライフサイクル管理 |
 | **最適化** | `run_few_shot_optimization`, `run_data_driven_optimize`, `analyze_data_driven_optimize_results` | フューショット及びデータ駆動型の自動プロンプト最適化 |
 | **プロキシ** | `call_dashscope_mcp` | リモート DashScope MCP ツールへのプロキシ呼び出し |
-| **生成 API** | `generate_with_vertex`, `generate_with_deepseek` | Vertex AI Gemini モデル (gemini-2.0-flash, gemini-1.5-pro, gemini-1.5-flash) と DeepSeek (deepseek-flash, deepseek-v4-pro) による汎用テキスト生成 |
+| **生成 API** | `generate_with_vertex`, `generate_with_deepseek` | Vertex AI Gemini モデル (gemini-2.5-flash, gemini-2.5-pro, gemini-2.5-flash-lite) と DeepSeek (deepseek-flash, deepseek-v4-pro) による汎用テキスト生成 |
 
 ## 🚀 デプロイと実行
 
@@ -71,7 +71,7 @@ python -m vertex.server --transport remote_sse --remote_sse_url https://YOUR-CLO
 ### 生成 API の使用例
 ```python
 # Vertex AI (Gemini)
-result = await session.call_tool("generate_with_vertex", {"prompt": "こんにちは", "model": "gemini-2.0-flash", "temperature": 0.7, "max_tokens": 512, "system_instruction": "簡潔に答えてください。"})
+result = await session.call_tool("generate_with_vertex", {"prompt": "こんにちは", "model": "gemini-2.5-flash", "temperature": 0.7, "max_tokens": 512, "system_instruction": "簡潔に答えてください。"})
 
 # DeepSeek (DEEPSEEK_API_KEY が必要)
 result = await session.call_tool("generate_with_deepseek", {"prompt": "こんにちは", "model": "deepseek-flash"})

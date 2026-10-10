@@ -10,7 +10,8 @@ from vertexai.generative_models import GenerationConfig, GenerativeModel
 
 from . import auth
 
-SUPPORTED_MODELS = ("gemini-2.0-flash", "gemini-1.5-pro", "gemini-1.5-flash")
+DEFAULT_MODEL = "gemini-2.5-flash"
+SUPPORTED_MODELS = ("gemini-2.5-flash", "gemini-2.5-pro", "gemini-2.5-flash-lite")
 
 
 class VertexGenerativeClient:
@@ -73,17 +74,22 @@ class VertexGenerativeClient:
     async def generate_content(
         self,
         prompt: str,
-        model: str = "gemini-2.0-flash",
+        model: str = DEFAULT_MODEL,
         temperature: float = 0.7,
         max_tokens: int = 1024,
         top_p: float = 0.95,
         top_k: int = 40,
         system_instruction: str | None = None,
     ) -> dict[str, Any]:
-        """Generate text with a Vertex AI Gemini model."""
+        """Generate text with a Vertex AI Gemini model.
+
+        Unknown model names only log a warning; Vertex validates them.
+        """
         if model not in SUPPORTED_MODELS:
-            raise ValueError(
-                f"Unsupported model '{model}'. Supported: {', '.join(SUPPORTED_MODELS)}"
+            print(
+                f"Warning: model '{model}' is not in the known list "
+                f"({', '.join(SUPPORTED_MODELS)}); passing it to Vertex AI.",
+                file=sys.stderr,
             )
         try:
             return await asyncio.to_thread(
