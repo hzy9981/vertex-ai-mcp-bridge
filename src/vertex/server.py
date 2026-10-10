@@ -19,6 +19,7 @@ from starlette.middleware.trustedhost import TrustedHostMiddleware
 from . import tools
 from . import usage_tracker
 from .deepseek_client import DeepSeekClient
+from .openai_compat import handle_chat_completions
 from .prompt_optimizer import analyzer, prompt_optimizer
 from .vertex_generative_client import VertexGenerativeClient
 
@@ -133,6 +134,11 @@ def main(argv: Sequence[str]) -> None:
                 yield f"event: error\ndata: {json.dumps({'error': str(e)})}\n\n"
 
         return StreamingResponse(event_generator(), media_type="text/event-stream")
+
+    @mcp.custom_route("/v1/chat/completions", methods=["POST"])
+    async def openai_chat_completions(request):
+        """OpenAI 兼容的 Chat Completions 接口 (需要 OPENAI_COMPATIBLE_API_KEY)。"""
+        return await handle_chat_completions(request, mcp.call_tool)
     # --------------------------------------------------------
 
     mcp.add_tool(prompt_manager.read_prompt)

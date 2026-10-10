@@ -78,5 +78,17 @@ result = await session.call_tool("generate_with_deepseek", {"prompt": "Hello", "
 ```
 Both return `text`, `model`, `finish_reason`, `input_tokens` and `output_tokens`, and are recorded by the token usage tracker.
 
+### OpenAI-Compatible API (`/v1/chat/completions`)
+
+Set `OPENAI_COMPATIBLE_API_KEY` (comma-separated for multiple keys) on the service. If unset, the route returns 501. Clients must send `Authorization: Bearer <key>`. Models are routed by prefix: `gemini-*` → Vertex AI, `deepseek-*` → DeepSeek. Set the client Base URL to the Cloud Run service URL (e.g. `https://<service>.run.app/v1`).
+
+```bash
+curl -X POST "$SERVICE_URL/v1/chat/completions" \
+  -H "Authorization: Bearer $OPENAI_COMPATIBLE_API_KEY" -H "Content-Type: application/json" \
+  -d '{"model": "gemini-2.5-flash", "messages": [{"role": "user", "content": "Hello!"}], "stream": false}'
+```
+
+`stream=true` returns `text/event-stream` (chunks are produced after the full response is generated). Errors: 400 invalid request, 401 bad key, 404 unknown model, 500 upstream failure.
+
 ## 📄 License
 [Apache-2.0 License](LICENSE)
