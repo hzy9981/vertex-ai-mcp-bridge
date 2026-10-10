@@ -78,5 +78,17 @@ result = await session.call_tool("generate_with_deepseek", {"prompt": "你好", 
 ```
 两者均返回 `text`、`model`、`finish_reason`、`input_tokens` 和 `output_tokens`，并计入 token 使用统计。
 
+### OpenAI 兼容 API (`/v1/chat/completions`)
+
+在服务上设置环境变量 `OPENAI_COMPATIBLE_API_KEY`（多个密钥用逗号分隔）；未设置时该路由返回 501。客户端需发送 `Authorization: Bearer <key>`。按模型名前缀路由：`gemini-*` → Vertex AI，`deepseek-*` → DeepSeek。在客户端中将 Base URL 设为 Cloud Run 服务地址（如 `https://<service>.run.app/v1`）。
+
+```bash
+curl -X POST "$SERVICE_URL/v1/chat/completions" \
+  -H "Authorization: Bearer $OPENAI_COMPATIBLE_API_KEY" -H "Content-Type: application/json" \
+  -d '{"model": "gemini-2.5-flash", "messages": [{"role": "user", "content": "你好！"}], "stream": false}'
+```
+
+`stream=true` 返回 `text/event-stream`（在完整响应生成后分块发送）。错误码：400 请求无效，401 密钥无效，404 模型不存在，500 上游失败。
+
 ## 📄 开源协议
 [Apache-2.0 License](LICENSE)

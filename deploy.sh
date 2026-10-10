@@ -23,7 +23,7 @@ gcloud run deploy "$SERVICE_NAME" \
     --region "$REGION" \
     --allow-unauthenticated \
     --memory=1Gi \
-    --set-env-vars GOOGLE_CLOUD_PROJECT="$PROJECT_ID",GOOGLE_CLOUD_LOCATION="$REGION",DASHSCOPE_API_KEY="$DASHSCOPE_API_KEY",DEEPSEEK_API_KEY="$DEEPSEEK_API_KEY"
+    --set-env-vars GOOGLE_CLOUD_PROJECT="$PROJECT_ID",GOOGLE_CLOUD_LOCATION="$REGION",DASHSCOPE_API_KEY="$DASHSCOPE_API_KEY",DEEPSEEK_API_KEY="$DEEPSEEK_API_KEY",OPENAI_COMPATIBLE_API_KEY="$OPENAI_COMPATIBLE_API_KEY"
 
 echo "--- 部署完成！ ---"
 SERVICE_URL=$(gcloud run services describe "$SERVICE_NAME" --project "$PROJECT_ID" --platform managed --region "$REGION" --format 'value(status.url)')

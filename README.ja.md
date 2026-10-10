@@ -78,5 +78,17 @@ result = await session.call_tool("generate_with_deepseek", {"prompt": "こんに
 ```
 どちらも `text`、`model`、`finish_reason`、`input_tokens`、`output_tokens` を返し、トークン使用量統計に記録されます。
 
+### OpenAI 互換 API (`/v1/chat/completions`)
+
+サービスに環境変数 `OPENAI_COMPATIBLE_API_KEY`（複数の場合はカンマ区切り）を設定します。未設定の場合、このルートは 501 を返します。クライアントは `Authorization: Bearer <key>` を送信します。モデル名のプレフィックスでルーティングされます：`gemini-*` → Vertex AI、`deepseek-*` → DeepSeek。クライアントの Base URL に Cloud Run のサービス URL（例：`https://<service>.run.app/v1`）を設定してください。
+
+```bash
+curl -X POST "$SERVICE_URL/v1/chat/completions" \
+  -H "Authorization: Bearer $OPENAI_COMPATIBLE_API_KEY" -H "Content-Type: application/json" \
+  -d '{"model": "gemini-2.5-flash", "messages": [{"role": "user", "content": "こんにちは！"}], "stream": false}'
+```
+
+`stream=true` は `text/event-stream` を返します（完全な応答の生成後にチャンク送信）。エラー：400 不正なリクエスト、401 キー無効、404 モデル不明、500 上流エラー。
+
 ## 📄 ライセンス
 [Apache-2.0 License](LICENSE)
