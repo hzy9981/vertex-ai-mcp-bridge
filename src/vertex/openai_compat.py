@@ -54,13 +54,21 @@ def _convert_messages(messages) -> tuple[str, str | None]:
     for m in messages:
         if not isinstance(m, dict) or not isinstance(m.get("role"), str):
             raise ValueError("each message must be an object with a 'role'")
-        text = _content_text(m.get("content"))
+        content = m.get("content")
+        # OpenAI allows null/missing content (e.g. assistant messages that
+        # only carry tool_calls). Treat it as empty text.
+        text = "" if content is None else _content_text(content)
         if text is None:
             raise ValueError("each message must have string or text-part 'content'")
-        if m["role"] in ("system", "developer"):
-            system.append(text)
+        role = m["role"]
+        if role in ("system", "developer"):
+            if text:
+                system.append(text)
+        elif not text and role != "user":
+            # Nothing to forward (e.g. assistant tool_calls with no text).
+            continue
         else:
-            turns.append((m["role"], text))
+            turns.append((role, text))
     if not turns:
         raise ValueError("'messages' must contain at least one non-system message")
     if len(turns) == 1 and turns[0][0] == "user":
